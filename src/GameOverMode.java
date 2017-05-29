@@ -18,7 +18,7 @@ public class GameOverMode {
         Font textfont = new Font("Tahoma", Font.BOLD|Font.ITALIC, 200);
         g.setFont(textfont);
         g.setColor(textColor);
-        g.drawString(""+ sco + "", 400, 400);
+        g.drawString(""+ sco + "", 300, 400);
 
         Font textfont2 = new Font("Tahoma", Font.BOLD|Font.ITALIC, 45);
         g.setFont(textfont2);
