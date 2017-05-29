@@ -14,104 +14,98 @@ import java.io.IOException;
 
 public class AnimationGenerator extends JComponent{
 
+    static int movbutt = 1; // костыль-страшный сон булата 1, если w, 2, если s
+    int shipSpeed = 4;
 
-    int starX=5;
-    int starY=5;
-    int starRadius=3;
-    int starMediumRadius=8;
-    int starBigRadius=18;
-    int nOfStars=150;
-    int nOfMediumStars=40;
-    int nOfBigStars=10;
-    static int shipX=700;
-    static int shipY=270;
+    static boolean flagForPause = false; //флаг для остановки элементов во время паузы. false, если не pause
 
-    // двухмерные массивы координат звезд
-    Dimension[] starArray = new Dimension[nOfStars];
-    Dimension[] mediumStarArray = new Dimension[nOfMediumStars];
-    Dimension[] bigStarArray = new Dimension[nOfBigStars];
+    int score = 0;
+    public StarArrayClass starComplex = new StarArrayClass();
+    public AsteroidClass asteroidComplex = new AsteroidClass();
+    public GameOverMode endOfGame = new GameOverMode();
+    public ShipClass shipObject = new ShipClass();
 
-    public Timer moveTimer = new Timer(10, new ActionListener() {
+    Color bgndColor2 = new Color(7, 7, 15);
+
+    public Timer shipMovingTimer = new Timer(1, new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            if((movbutt==1)&&(shipObject.shipY<500)) shipObject.shipY+=shipSpeed;
+            if((movbutt==2)&&(shipObject.shipY>10)) shipObject.shipY-=shipSpeed;
+        }
+    });
+
+    Timer scoretimer = new Timer( 100, new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            if (flagForPause==false){ score++; }
+        }
+    });
+
+    public Timer moveTimer = new Timer( 10, new ActionListener() {
         @Override
         //движение мелких, средних, больших звезд
         public void actionPerformed(ActionEvent e) {
-            for (int i = 0; i < nOfStars ; i++) {
-                if(starArray[i].getWidth()<=999) {
-                    starArray[i].setSize(starArray[i].getWidth() + 1, starArray[i].getHeight());
-                }
-                else starArray[i].setSize(starArray[i].getWidth() - 999.0, starArray[i].getHeight());
-            }
-
-            for (int i = 0; i < nOfMediumStars ; i++) {
-                if(mediumStarArray[i].getWidth()<=999) {
-                    mediumStarArray[i].setSize(mediumStarArray[i].getWidth() + 2, mediumStarArray[i].getHeight());
-                }
-                else mediumStarArray[i].setSize(mediumStarArray[i].getWidth() - 999.0, mediumStarArray[i].getHeight());
-            }
-
-            for (int i = 0; i < nOfBigStars ; i++) {
-                if(bigStarArray[i].getWidth()<=999) {
-                    bigStarArray[i].setSize(bigStarArray[i].getWidth() + 5, bigStarArray[i].getHeight());
-                }
-                else bigStarArray[i].setSize(bigStarArray[i].getWidth() - 999.0, bigStarArray[i].getHeight());
-            }
+            starComplex.starMovingFunction();
 
         }
     });
 
-    public void mover(int yyy){
-        shipY+=yyy;
-    };
+    public Timer moveAstrTimer = new Timer(10, new ActionListener() {
+        @Override
+        //движение астероидов
+        public void actionPerformed(ActionEvent e) {
+            asteroidComplex.astrMovingFunction();
+
+        }
+    });
 
     // таймер перерисовывает картинку
     Timer redrawTimer = new Timer(1, new ActionListener() {
         @Override
         public void actionPerformed(ActionEvent e) {
             repaint();
-        }
-    });
 
+            if (asteroidComplex.crushFlag==true){
+                    moveTimer.stop();
+                    moveAstrTimer.stop();
+                    scoretimer.stop();
+                    shipMovingTimer.stop();
+                    endOfGame.resetScore(score);
+
+            }
+        }
+
+    });
 
     // конструктор-кондуктор, в котором происходит изначальная генерация позиций звезд
     AnimationGenerator(){
         moveTimer.start();
+        moveAstrTimer.start();
         redrawTimer.start();
-
-        for (int i = 0; i < nOfStars ; i++) {
-            starArray[i]=new Dimension(10 + (int) (Math.random() * 980),10 + (int) (Math.random() * 680));
-        }
-
-        for (int i = 0; i < nOfMediumStars ; i++) {
-            mediumStarArray[i]=new Dimension(10 + (int) (Math.random() * 980),10 + (int) (Math.random() * 680));
-        }
-
-        for (int i = 0; i < nOfBigStars ; i++) {
-            bigStarArray[i]=new Dimension(10 + (int) (Math.random() * 980),10 + (int) (Math.random() * 680));
-        }
+        scoretimer.start();
+        starComplex.RandomPositionsFunction();
+        asteroidComplex.RandomPositionsFunction();
     }
 
-    // цвет звезд
-    Color starColor = new Color(248, 247, 255);
-
+    Color textColor = new Color(255, 224, 61);
+    Color pauseColor = new Color(250, 255, 239);
 
     public void paint(Graphics g){
-
-        //отрисовка звезд трех слоев
-        g.setColor(starColor);
-        for (int i = 0; i < nOfStars ; i++)
-            g.fillOval((int)starArray[i].getWidth(), (int)starArray[i].getHeight(), starRadius, starRadius);
-        for (int i = 0; i < nOfMediumStars ; i++)
-            g.fillOval((int) mediumStarArray[i].getWidth(), (int) mediumStarArray[i].getHeight(), starMediumRadius, starMediumRadius);
-        for (int i = 0; i < nOfBigStars ; i++)
-            g.fillOval((int) bigStarArray[i].getWidth(), (int) bigStarArray[i].getHeight(), starBigRadius, starBigRadius);
-
-        BufferedImage spaceShip = null;
-        try
-        {
-            spaceShip = ImageIO.read(new File("images/spaceshit3.png"));
-        } catch (IOException e){e.printStackTrace();}
-
-        g.drawImage(spaceShip, shipX, shipY, 200, 160, null);
+        g.setColor(bgndColor2);
+        starComplex.starDraw(g);
+        shipObject.shipDraw(g);
+        asteroidComplex.asterDraw(g);
+        Font textfont = new Font("Tahoma", Font.BOLD|Font.ITALIC, 20);
+        g.setFont(textfont);
+        g.setColor(textColor);
+        g.drawString("Ваш звёдолёт пролетел уже целых "+ score + " световых годиков", 30, 30);
+        if(flagForPause==true){
+            g.setColor(pauseColor);
+            g.fillRect(460,300,30, 100);
+            g.fillRect(520,300,30, 100);
+        }
+        if (asteroidComplex.crushFlag==true) endOfGame.EndDraw(g);
 
     }
 

@@ -7,41 +7,61 @@ public class AnimaExplorer extends JFrame{
 
 
     public AnimationGenerator animationGenerator=new AnimationGenerator();
+    public ShipClass shipKostil = new ShipClass();
     public JPanel mainPanel;
-    private AnimationGenerator anim = new AnimationGenerator();
 
     AnimaExplorer() {
-        super("CONVERTER");
+        super("3,14здолёт");
         getContentPane().setBackground(Color.BLACK);
-        setBounds(300, 300, 1000, 700);
+        setBounds(300, 200, 1000, 700);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setResizable(false);
         Color bgndColor = new Color(7, 7, 15);
 
         mainPanel = new JPanel();
         mainPanel.setLayout(new BorderLayout());
-        mainPanel.setBackground(bgndColor);
 
+        mainPanel.setBackground(bgndColor);
         mainPanel.add(animationGenerator,BorderLayout.CENTER);
 
-        this.addKeyListener(new pauseButton());
-        this.addKeyListener(new upButton());
-        this.addKeyListener(new downButton());
+        this.addKeyListener(new buttonHandler());
 
         getContentPane().setBackground(Color.BLACK);
+
         setContentPane(mainPanel);
         setVisible(true);
     }
 
 
-    public class pauseButton implements KeyListener {
+    public class buttonHandler implements KeyListener {
         @Override
         public void keyTyped(KeyEvent e) {
-            System.out.println(e.getExtendedKeyCode()+" "+animationGenerator.moveTimer.isRunning());
-            if(e.getExtendedKeyCode()==80){
-                if(animationGenerator.moveTimer.isRunning()) animationGenerator.moveTimer.stop();
-                else animationGenerator.moveTimer.start();
+            if((e.getExtendedKeyCode()==80)||(e.getExtendedKeyCode()==16778295)){
+                if(animationGenerator.moveTimer.isRunning()){
+                    animationGenerator.moveTimer.stop();
+                    animationGenerator.moveAstrTimer.stop();
+                    animationGenerator.flagForPause = true;
+                }
+                else {
+                    animationGenerator.moveTimer.start();
+                    animationGenerator.moveAstrTimer.start();
+                    animationGenerator.flagForPause = false;
+                }
             }
+
+
+            if(((e.getExtendedKeyCode()==83)||(e.getExtendedKeyCode()==16778315))&&
+                    (shipKostil.shipY<500)&&(animationGenerator.flagForPause==false)){
+                animationGenerator.movbutt=1;
+                animationGenerator.shipMovingTimer.start();
+            }
+
+            if(((e.getExtendedKeyCode()==87)||(e.getExtendedKeyCode()==16778310))&&
+                    (shipKostil.shipY>10)&&(animationGenerator.flagForPause==false)){
+                animationGenerator.movbutt=2;
+                animationGenerator.shipMovingTimer.start();
+            }
+
         }
 
         @Override
@@ -52,43 +72,18 @@ public class AnimaExplorer extends JFrame{
         @Override
         public void keyReleased(KeyEvent e) {
 
-        }
-    }
-
-    public class upButton implements KeyListener {
-        @Override
-        public void keyTyped(KeyEvent e) {
-            if((e.getExtendedKeyCode()==83)||(e.getExtendedKeyCode()==16778315)&&(anim.shipY<500)){
-                anim.shipY+=20;
+            if(((e.getExtendedKeyCode()==83)||(e.getExtendedKeyCode()==16778315))&&
+                    (shipKostil.shipY<500)&&(animationGenerator.flagForPause==false)){
+                animationGenerator.movbutt=1;
+                animationGenerator.shipMovingTimer.stop();
             }
-        }
 
-        @Override
-        public void keyPressed(KeyEvent e) {
-
-        }
-
-        @Override
-        public void keyReleased(KeyEvent e) {
-
-        }
-    }
-
-    public class downButton implements KeyListener {
-        @Override
-        public void keyTyped(KeyEvent e) {
-            if(((e.getExtendedKeyCode()==87)||(e.getExtendedKeyCode()==16778310))&&(anim.shipY>10)){
-                anim.shipY-=20;
+            if(((e.getExtendedKeyCode()==87)||(e.getExtendedKeyCode()==16778310))&&
+                    (shipKostil.shipY>10)&&(animationGenerator.flagForPause==false)){
+                animationGenerator.movbutt=2;
+                animationGenerator.shipMovingTimer.stop();
             }
-        }
 
-        @Override
-        public void keyPressed(KeyEvent e) {
-
-        }
-
-        @Override
-        public void keyReleased(KeyEvent e) {
 
         }
     }
