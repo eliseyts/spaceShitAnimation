@@ -102,7 +102,7 @@ public class AnimaExplorer extends JFrame{
         public void mousePressed(MouseEvent e) {
             Point mouseCoord = getMousePosition();
             if ((AsteroidClass.crushFlag==true)&&(((mouseCoord.x>=410)&&(mouseCoord.x<=590))&&((mouseCoord.y>=500)&&(mouseCoord.y<=580)))) {
-                System.out.println("БАТТОН");
+                System.out.println("YOUBA");
                 AsteroidClass.crushFlag=false;
                 animationGenerator.score = 0;
                 animationGenerator.shipObject.shipNullCoord();
