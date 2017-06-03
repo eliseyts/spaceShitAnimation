@@ -16,10 +16,11 @@ public class AnimationGenerator extends JComponent{
 
     static int movbutt = 1; // костыль-страшный сон булата 1, если w, 2, если s
     int shipSpeed = 4;
+   static int aaa=0;
 
     static boolean flagForPause = false; //флаг для остановки элементов во время паузы. false, если не pause
 
-    int score = 0;
+    static int score = 0;
     public StarArrayClass starComplex = new StarArrayClass();
     public AsteroidClass asteroidComplex = new AsteroidClass();
     public GameOverMode endOfGame = new GameOverMode();
@@ -80,12 +81,14 @@ public class AnimationGenerator extends JComponent{
 
     // конструктор-кондуктор, в котором происходит изначальная генерация позиций звезд
     AnimationGenerator(){
+        score = 0;
+        shipObject.shipNullCoord();
+        starComplex.RandomPositionsFunction();
+        asteroidComplex.RandomPositionsFunction();
         moveTimer.start();
         moveAstrTimer.start();
         redrawTimer.start();
         scoretimer.start();
-        starComplex.RandomPositionsFunction();
-        asteroidComplex.RandomPositionsFunction();
     }
 
     Color textColor = new Color(255, 224, 61);

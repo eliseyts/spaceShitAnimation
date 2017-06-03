@@ -2,6 +2,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 
 public class AnimaExplorer extends JFrame{
 
@@ -24,7 +26,8 @@ public class AnimaExplorer extends JFrame{
         mainPanel.setBackground(bgndColor);
         mainPanel.add(animationGenerator,BorderLayout.CENTER);
 
-        this.addKeyListener(new buttonHandler());
+        this.addKeyListener(new ButtonHandler());
+        this.addMouseListener(new MouseHandler());
 
         getContentPane().setBackground(Color.BLACK);
 
@@ -33,7 +36,7 @@ public class AnimaExplorer extends JFrame{
     }
 
 
-    public class buttonHandler implements KeyListener {
+    public class ButtonHandler implements KeyListener {
         @Override
         public void keyTyped(KeyEvent e) {
             if((e.getExtendedKeyCode()==80)||(e.getExtendedKeyCode()==16778295)){
@@ -84,6 +87,50 @@ public class AnimaExplorer extends JFrame{
                 animationGenerator.shipMovingTimer.stop();
             }
 
+
+        }
+    }
+
+    public class MouseHandler implements MouseListener {
+
+        @Override
+        public void mouseClicked(MouseEvent e) {
+
+        }
+
+        @Override
+        public void mousePressed(MouseEvent e) {
+            Point mouseCoord = getMousePosition();
+            if ((AsteroidClass.crushFlag==true)&&(((mouseCoord.x>=410)&&(mouseCoord.x<=590))&&((mouseCoord.y>=500)&&(mouseCoord.y<=580)))) {
+                System.out.println("БАТТОН");
+                AsteroidClass.crushFlag=false;
+                animationGenerator.score = 0;
+                animationGenerator.shipObject.shipNullCoord();
+                animationGenerator.starComplex.RandomPositionsFunction();
+                animationGenerator.asteroidComplex.RandomPositionsFunction();
+                animationGenerator.moveTimer.start();
+                animationGenerator.moveAstrTimer.start();
+                animationGenerator.redrawTimer.start();
+                animationGenerator.scoretimer.start();
+                //new AnimationGenerator();
+
+
+            }
+
+        }
+
+        @Override
+        public void mouseReleased(MouseEvent e) {
+
+        }
+
+        @Override
+        public void mouseEntered(MouseEvent e) {
+
+        }
+
+        @Override
+        public void mouseExited(MouseEvent e) {
 
         }
     }
